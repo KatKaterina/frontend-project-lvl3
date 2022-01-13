@@ -1,8 +1,14 @@
+root: true
+
 env:
   browser: true
   es2021: true
-extends: eslint:recommended
-parserOptions:
-  ecmaVersion: 13
-  sourceType: module
-rules: {}
+  node: true
+
+extends:
+  - "airbnb-base"
+  - "plugin:jest/recommended"
+  
+rules:
+  no-console: 0
+  import/extensions: 0

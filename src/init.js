@@ -22,7 +22,7 @@ export default () => {
     resources,
   });
 
-  const form = document.querySelector('.rss-form');
+  const form = document.querySelector('#rss-form');
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     handler(state, e, i18nInstance);

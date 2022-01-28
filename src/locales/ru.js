@@ -4,7 +4,7 @@ export default {
       invalid: 'Ссылка должна быть валидным URL',
       alreadyExist: 'RSS уже существует',
       networkError: 'Ошибка сети',
-      parseError: 'Ошибка парсинга',
+      parseError: 'Ресурс не содержит валидный RSS', // 'Ошибка парсинга',
     },
     success: 'RSS успешно загружен',
     elements: {

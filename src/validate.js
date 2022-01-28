@@ -9,11 +9,12 @@ export default (data, urls, i18nInstance) => {
       notOneOf: () => i18nInstance.t('errors.alreadyExist'),
     },
   });
+
   const schema = yup.object().shape({
     url: yup.string().url().notOneOf(urls),
   });
+
   return schema.validate(data)
-  // return schema.isValid(data)
     .then(() => null)
     .catch((e) => e);
 };

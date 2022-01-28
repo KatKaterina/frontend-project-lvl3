@@ -11,8 +11,8 @@ export default () => {
     },
     feeds: [],
     posts: [],
+    viewedPosts: [],
     validUrls: [],
-    // errors: [],
     updateProcess: null,
   };
 
@@ -26,9 +26,5 @@ export default () => {
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     handler(state, e, i18nInstance);
-    // forma.reset();
-    // form.focus();
   });
 };
-
-// export default state;

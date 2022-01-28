@@ -1,11 +1,46 @@
+/* eslint-disable import/no-cycle */
 import onChange from 'on-change';
-// import i18n from 'i18next';
-// import state from './state.js';
-// import resources from './locales/index.js';
+import { handlerPost } from './handler';
+
+const renderModal = (post) => {
+  const body = document.querySelector('body');
+  body.classList.add('modal-open');
+  body.setAttribute('style', 'overflow:hidden;padding-right:17px');
+
+  const modal = document.querySelector('#modal');
+  modal.classList.add('show');
+  modal.setAttribute('style', 'display:block;');
+  modal.removeAttribute('aria-hidden');
+  modal.setAttribute('aria-modal', 'true');
+
+  const { titlePost, linkPost, descrPost } = post;
+  const title = document.querySelector('.modal-title');
+  title.textContent = titlePost;
+
+  const content = document.querySelector('.modal-body');
+  content.innerHTML = descrPost;
+
+  const link = document.querySelector('.full-article');
+  link.setAttribute('href', linkPost);
+
+  const buttonsClose = document.querySelectorAll('[data-bs-dismiss="modal"]');
+  buttonsClose.forEach((button) => {
+    button.addEventListener('click', () => {
+      body.classList.remove('modal-open');
+      body.setAttribute('style', '');
+
+      modal.classList.remove('show');
+      modal.setAttribute('style', 'display:none;');
+      modal.removeAttribute('aria-modal');
+      modal.setAttribute('aria-hidden', 'true');
+    });
+  });
+};
 
 const renderFeed = (state, i18nInstance) => {
   const feedsContainer = document.querySelector('.feeds');
   feedsContainer.innerHTML = '';
+
   const div = document.createElement('div');
   div.classList.add('card', 'border-0');
   div.innerHTML = `<div class="card-body"><h2 class="card-title h4">${i18nInstance.t('elements.feeds')}</h2></div>`;
@@ -17,7 +52,7 @@ const renderFeed = (state, i18nInstance) => {
 
   const { feeds } = state;
   feeds.forEach((feed) => {
-    const { idFeed, title, description } = feed;
+    const { title, description } = feed;
     const li = document.createElement('li');
     li.classList.add('list-group-item', 'border-0', 'border-end-0');
     li.innerHTML = `<h3 class="h6 m-0">${title}</h3><p class="m-0 small text-black-50">${description}</p>`;
@@ -26,10 +61,11 @@ const renderFeed = (state, i18nInstance) => {
 };
 
 const renderPost = (state, i18nInstance) => {
-  const { posts } = state;
+  const { posts, viewedPosts } = state;
   if (posts.length === 0) {
     return;
   }
+
   const postsContainer = document.querySelector('.posts');
   postsContainer.innerHTML = '';
   const div = document.createElement('div');
@@ -41,15 +77,30 @@ const renderPost = (state, i18nInstance) => {
   ul.classList.add('list-group', 'border-0', 'rounded-0');
   div.append(ul);
 
-  
   posts.forEach((post) => {
-    const isViewed = false;
-    const { idFeed, idPost, titlePost, linkPost, descrPost, } = post;
+    const { idPost, titlePost, linkPost } = post;
+    const isViewed = viewedPosts.includes(idPost);
+
     const li = document.createElement('li');
     li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
-    li.innerHTML = `<a href="${linkPost}" class="${isViewed ? 'font-weight-normal' : 'font-weight-bold'}" target="_blank" rel="noopener noreferrer">
-      ${titlePost}</a>
-      <button type="button" class="btn btn-primary btn-sm">${i18nInstance.t('elements.buttonView')}</button>`;
+    li.innerHTML = `<a href="${linkPost}" class="${isViewed ? 'fw-normal' : 'fw-bold'}" target="_blank" rel="noopener noreferrer">
+      ${titlePost}</a><button type="button" class="btn btn-primary btn-sm">${i18nInstance.t('elements.buttonView')}</button>`;
+
+    const link = li.querySelector('a');
+    link.addEventListener('click', () => {
+      handlerPost(state, post);
+      link.classList.add('fw-normal');
+      link.classList.remove('fw-bold');
+    });
+
+    const button = li.querySelector('button');
+    button.addEventListener('click', () => {
+      handlerPost(state, post);
+      renderModal(post);
+      link.classList.add('fw-normal');
+      link.classList.remove('fw-bold');
+    });
+
     ul.append(li);
   });
 };
@@ -96,11 +147,9 @@ export default (state, i18nInstance) => {
         render(state, value, i18nInstance);
         break;
       default:
-        // renderFeed(state, i18nInstance);
         break;
     }
   });
 
   return watchedState;
 };
-// export default watchedState;

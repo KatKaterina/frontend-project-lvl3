@@ -27,6 +27,5 @@ export default (data) => {
     };
     posts.push(post);
   });
-  // console.log(posts);
   return { feed, posts };
 };

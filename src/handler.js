@@ -1,61 +1,65 @@
+/* eslint-disable import/no-cycle */
+/* eslint-disable no-param-reassign */
+import _ from 'lodash';
 import validate from './validate.js';
 import watchedState from './view.js';
 import uploadRSS from './uploadRSS';
 import parse from './parse.js';
 
-const uploadChannel = (url, i18nInstance) => {
-  // result = { errorUpload, formState, feed, posts}
-  let result = {};
-  return uploadRSS(url)
-    .then((response) => {
-      const resultParse = parse(response.data.contents);
-      if (resultParse === null) {
-        // watched.form.error = i18nInstance.t('errors.parseError');
-        // watched.form.state = 'failed';
-        return { errorUpload: i18nInstance.t('errors.parseError'), formState: 'failed', feed: {}, posts: [] };
-      }
-      const { feed, posts } = resultParse;
-      // console.log(feed);
-      // console.log(posts);
-      // state.feeds.unshift(feed);
-      // state.posts = [...posts, ...state.posts];
-      // watched.form.state = 'success';
-      // console.log(state.posts);
-      // watched.validUrls.unshift(url);
-      return { errorUpload: null, formState: 'success', feed, posts };
-    })
-    .catch((error) => {
-      // console.log(error);
-      // watched.form.state = 'failed';
-      if (error.isAxiosError) {
-        // watched.form.error = i18nInstance.t('errors.networkError');
-        return { errorUpload: i18nInstance.t('errors.networkError'), formState: 'failed', feed: {}, posts:[] };
-      }
-      // watched.form.error = i18nInstance.t('errors.invalid');
-      return { errorUpload: i18nInstance.t('errors.invalid'), formState: 'failed', feed: {}, posts:[] };
-    });
-};
+const uploadChannel = (url, i18nInstance) => uploadRSS(url)
+  .then((response) => {
+    const resultParse = parse(response.data.contents);
+    if (resultParse === null) {
+      return {
+        errorUpload: i18nInstance.t('errors.parseError'),
+        formState: 'failed',
+        feed: {},
+        posts: [],
+      };
+    }
+    const { feed, posts } = resultParse;
+    return {
+      errorUpload: null,
+      formState: 'success',
+      feed,
+      posts,
+    };
+  })
+  .catch((error) => {
+    if (error.isAxiosError) {
+      return {
+        errorUpload: i18nInstance.t('errors.networkError'),
+        formState: 'failed',
+        feed: {},
+        posts: [],
+      };
+    }
+    return {
+      errorUpload: i18nInstance.t('errors.invalid'),
+      formState: 'failed',
+      feed: {},
+      posts: [],
+    };
+  });
 
 const updateRSS = (state, i18nInstance, watched) => {
   const interval = 5000;
-  //state.feeds = [];
-  //state.posts = [];
 
   const updatePosts = () => {
     watched.form.state = 'updating';
     const promises = state.validUrls.map((url) => uploadChannel(url, i18nInstance));
-    console.log(promises);
     Promise.all(promises)
-      .then((result) => {
+      .then((results) => {
         state.updateProcess = 'running';
-        console.log(result);
-        const { errorUpload, formState, feed, posts } = result;
-        if (errorUpload === null) {
-          //state.feeds.unshift(feed);
-          state.posts = [...posts, ...state.posts];
-        }
-        watched.form.error = errorUpload;
-        // watched.form.state = formState;
+        results.forEach((result) => {
+          const { errorUpload, posts } = result;
+          if (errorUpload === null) {
+            const unionPosts = _.unionBy(state.posts, posts, 'linkPost');
+            const newPosts = _.differenceBy(unionPosts, state.posts, 'linkPost');
+            state.posts = [...newPosts, ...state.posts];
+          }
+          watched.form.error = errorUpload;
+        });
         watched.form.state = 'updated';
         setTimeout(updatePosts, interval);
       })
@@ -63,25 +67,7 @@ const updateRSS = (state, i18nInstance, watched) => {
   };
 
   if (state.updateProcess === null) {
-    //state.updateProcess = 'running';
-    setTimeout(updatePosts
-    /* {
-       const promises = state.validUrls.map((url) => uploadChannel(url, i18nInstance));
-      console.log(promises);
-      Promise.all(promises)
-        .then((result) => {
-          console.log(result);
-          const { errorUpload, formState, feed, posts } = result;
-          if (errorUpload === null) {
-            //state.feeds.unshift(feed);
-            state.posts = [...posts, ...state.posts];
-          }
-          watched.form.error = errorUpload;
-          watched.form.state = formState;
-          updateRSS(state, i18nInstance, watched);
-        }) 
-        .catch(() => updateRSS(state, i18nInstance, watched));*/
-    , interval);
+    setTimeout(updatePosts, interval);
   }
 };
 
@@ -99,18 +85,15 @@ const handler = (state, el, i18nInstance) => {
         watched.form.error = errors.message;
         watched.form.state = 'failed';
       } else {
-
-        /* const { errorUpload, formState, feed, posts } = uploadChannel(currentUrl);
-        if (errorUpload === null) {
-          state.feeds.unshift(feed);
-          state.posts = [...posts, ...state.posts];
-          state.validUrls.unshift(currentUrl);
-        }
-        watched.form.error = errorUpload;
-        watched.form.state = formState;*/
         uploadChannel(currentUrl, i18nInstance)
           .then((result) => {
-            const { errorUpload, formState, feed, posts } = result;
+            const {
+              errorUpload,
+              formState,
+              feed,
+              posts,
+            } = result;
+
             if (errorUpload === null) {
               state.feeds.unshift(feed);
               state.posts = [...posts, ...state.posts];
@@ -124,7 +107,13 @@ const handler = (state, el, i18nInstance) => {
     .then(() => {
       updateRSS(state, i18nInstance, watched);
     });
-  // .catch((e) => watchedState.errors.push(e));
+};
+
+export const handlerPost = (state, post) => {
+  const { idPost } = post;
+  if (!state.viewedPosts.includes(idPost)) {
+    state.viewedPosts.push(idPost);
+  }
 };
 
 export default handler;

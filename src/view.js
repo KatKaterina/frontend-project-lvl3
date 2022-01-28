@@ -108,6 +108,10 @@ const renderPost = (state, i18nInstance) => {
 const render = (state, value, i18nInstance) => {
   const input = document.getElementById('url-input');
   const feedback = document.querySelector('.feedback');
+  const buttonAdd = document.querySelector('[aria-label="add"]');
+
+  input.setAttribute('readonly', 'false');
+  buttonAdd.setAttribute('disabled', 'false');
 
   switch (value) {
     case 'sending':
@@ -115,6 +119,8 @@ const render = (state, value, i18nInstance) => {
       feedback.classList.remove('text-danger');
       feedback.classList.remove('text-success');
       feedback.textContent = '';
+      input.setAttribute('readonly', 'true');
+      buttonAdd.setAttribute('disabled', 'true');
       break;
     case 'failed':
       input.classList.add('is-invalid');

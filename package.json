@@ -2,7 +2,7 @@
   "name": "@hexlet/code",
   "version": "1.0.0",
   "description": "Frontend project - 3, RSS",
-  "main": "src/index.js",
+  "main": "src/init.js",
   "scripts": {
     "test": "npx jest --bail"
   },

@@ -14,6 +14,7 @@ export default (data, urls, i18nInstance) => {
     url: yup.string().url().notOneOf(urls),
   });
 
+  console.log(data);
   return schema.validate(data)
     .then(() => null)
     .catch((e) => e);

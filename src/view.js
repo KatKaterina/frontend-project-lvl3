@@ -110,8 +110,8 @@ const render = (state, value, i18nInstance) => {
   const feedback = document.querySelector('.feedback');
   const buttonAdd = document.querySelector('[aria-label="add"]');
 
-  input.setAttribute('readonly', 'false');
-  buttonAdd.setAttribute('disabled', 'false');
+  input.removeAttribute('readonly');
+  buttonAdd.removeAttribute('disabled');
 
   switch (value) {
     case 'sending':

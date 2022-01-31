@@ -2,7 +2,7 @@
 import onChange from 'on-change';
 import { handlerPost } from './handler';
 
-const input = document.getElementById('url-input');
+// const input = document.getElementById('url-input');
 const feedback = document.querySelector('.feedback');
 const buttonAdd = document.querySelector('[aria-label="add"]');
 
@@ -113,6 +113,7 @@ const renderPost = (state, i18nInstance) => {
 };
 
 const render = (state, value, i18nInstance) => {
+  const input = document.getElementById('url-input');
   input.removeAttribute('readonly');
   buttonAdd.removeAttribute('disabled');
 
@@ -164,7 +165,8 @@ const renderLang = (value, i18nInstance, state) => {
 
   const lead = document.querySelector('.lead');
   lead.textContent = i18nInstance.t('elements.descr');
-
+  
+  const input = document.getElementById('url-input');
   input.setAttribute('placeholder', i18nInstance.t('elements.placeholder'));
 
   const label = document.querySelector('[for="url-input"]');

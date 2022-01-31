@@ -26,6 +26,7 @@ export default () => {
   });
 
   //const watched = watchedState(state, i18nInstance);
+  console.log(state);
   const watched = onChange(state, (path, value) => (watchedState(state, path, value, i18nInstance)));
 
   console.log(state);

@@ -28,6 +28,7 @@ export default () => {
   //const watched = watchedState(state, i18nInstance);
   const watched = onChange(state, (path, value) => (watchedState(state, path, value, i18nInstance)));
 
+  console.log(state);
   const form = document.querySelector('#rss-form');
   form.addEventListener('submit', (e) => {
     e.preventDefault();

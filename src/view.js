@@ -184,7 +184,7 @@ const renderLang = (value, i18nInstance, state) => {
   renderFeed(state, i18nInstance);
   renderPost(state, i18nInstance);
 
-  feedback.textContent = (state.form.error === null && state.form.state !== 'filling') ? i18nInstance.t('success') : i18nInstance.t(state.form.error);
+  //feedback.textContent = (state.form.error === null && state.form.state !== 'filling') ? i18nInstance.t('success') : i18nInstance.t(state.form.error);
 };
 
 export default (state, path, value, i18nInstance) => {

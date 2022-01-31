@@ -1,10 +1,10 @@
 /* eslint-disable import/no-cycle */
-import onChange from 'on-change';
+// import onChange from 'on-change';
 import { handlerPost } from './handler';
 
 // const input = document.getElementById('url-input');
-const feedback = document.querySelector('.feedback');
-const buttonAdd = document.querySelector('[aria-label="add"]');
+// const feedback = document.querySelector('.feedback');
+// const buttonAdd = document.querySelector('[aria-label="add"]');
 
 const renderModal = (post) => {
   const body = document.querySelector('body');
@@ -114,6 +114,8 @@ const renderPost = (state, i18nInstance) => {
 
 const render = (state, value, i18nInstance) => {
   const input = document.getElementById('url-input');
+  const feedback = document.querySelector('.feedback');
+  const buttonAdd = document.querySelector('[aria-label="add"]');
   input.removeAttribute('readonly');
   buttonAdd.removeAttribute('disabled');
 
@@ -165,7 +167,7 @@ const renderLang = (value, i18nInstance, state) => {
 
   const lead = document.querySelector('.lead');
   lead.textContent = i18nInstance.t('elements.descr');
-  
+
   const input = document.getElementById('url-input');
   input.setAttribute('placeholder', i18nInstance.t('elements.placeholder'));
 
@@ -175,6 +177,7 @@ const renderLang = (value, i18nInstance, state) => {
   const example = document.querySelector('#example');
   example.textContent = i18nInstance.t('elements.example');
 
+  const buttonAdd = document.querySelector('[aria-label="add"]');
   buttonAdd.textContent = i18nInstance.t('elements.buttonAdd');
 
   const buttonRead = document.querySelector('.btn-primary');
@@ -186,23 +189,24 @@ const renderLang = (value, i18nInstance, state) => {
   renderFeed(state, i18nInstance);
   renderPost(state, i18nInstance);
 
-  //feedback.textContent = (state.form.error === null && state.form.state !== 'filling') ? i18nInstance.t('success') : i18nInstance.t(state.form.error);
+  const feedback = document.querySelector('.feedback');
+  feedback.textContent = (state.form.error === null && state.form.state !== 'filling') ? i18nInstance.t('success') : i18nInstance.t(state.form.error);
 };
 
 export default (state, path, value, i18nInstance) => {
-//export default (state, i18nInstance) => {
-  //const watchedState = onChange(state, (path, value) => {
-    switch (path) {
-      case 'form.state':
-        render(state, value, i18nInstance);
-        break;
-      case 'lng':
-        renderLang(value, i18nInstance, state);
-        break;
-      default:
-        break;
-    }
-  //});
+// export default (state, i18nInstance) => {
+  // const watchedState = onChange(state, (path, value) => {
+  switch (path) {
+    case 'form.state':
+      render(state, value, i18nInstance);
+      break;
+    case 'lng':
+      renderLang(value, i18nInstance, state);
+      break;
+    default:
+      break;
+  }
+  // });
 
-  //return watchedState;
+  // return watchedState;
 };

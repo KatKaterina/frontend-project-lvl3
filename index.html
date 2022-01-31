@@ -6,6 +6,9 @@
     <title>RSS агрегатор (учебный проект)</title>
   </head>
   <body class="d-flex flex-column min-vh-100" style>
+    <div class="m-0 position-absolute align-self-end">
+      <span class = "text-white fw-bold" data-language="ru">Руc </span><span class = "text-white" data-language="en"> Eng</span>
+    </div>
     <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modal" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -25,7 +28,7 @@
       <section class="container-fluid bg-dark p-5">
         <div class="row">
           <div class="col-md-10 col-lg-8 mx-auto text-white">
-            <h1 class="dispay-3 mb-0">RSS агрегатор</h1>
+            <h1 class="dispay-3 mb-0 main-title">RSS агрегатор</h1>
             <p class="lead">Начните читать RSS сегодня! Это легко, это красиво.</p>
             <form action="" id="rss-form" class="rss-form text-body">
               <div class="row">
@@ -40,7 +43,7 @@
                 </div>
               </div>
             </form>
-            <p class="mt-2 mb-0 text-muted">Пример: https://echo.msk.ru/news.rss</p>
+            <p class="mt-2 mb-0 text-muted" id="example">Пример: https://echo.msk.ru/news.rss</p>
             <p class="feedback m-0 position-absolute small text-danger"></p>
           </div>
         </div>

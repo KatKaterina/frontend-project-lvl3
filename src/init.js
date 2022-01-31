@@ -1,6 +1,8 @@
 import i18n from 'i18next';
-import handler from './handler.js';
+// import handler from './handler.js';
+import { handler, handlerChangeLang } from './handler.js';
 import resources from './locales/index.js';
+import watchedState from './view.js';
 
 export default () => {
   const state = {
@@ -22,9 +24,18 @@ export default () => {
     resources,
   });
 
+  const watched = watchedState(state, i18nInstance);
+
   const form = document.querySelector('#rss-form');
   form.addEventListener('submit', (e) => {
     e.preventDefault();
-    handler(state, e, i18nInstance);
+    handler(watched, e, i18nInstance);
+  });
+
+  const itemsLang = document.querySelectorAll('[data-language]');
+  itemsLang.forEach((item) => {
+    item.addEventListener('click', ((e) => {
+      handlerChangeLang(watched, e, i18nInstance);
+    }));
   });
 };

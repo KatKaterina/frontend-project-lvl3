@@ -2,16 +2,16 @@
 /* eslint-disable no-param-reassign */
 import _ from 'lodash';
 import validate from './validate.js';
-import watchedState from './view.js';
+// import watchedState from './view.js';
 import uploadRSS from './uploadRSS';
 import parse from './parse.js';
 
-const uploadChannel = (url, i18nInstance) => uploadRSS(url)
+const uploadChannel = (url) => uploadRSS(url)
   .then((response) => {
     const resultParse = parse(response.data.contents);
     if (resultParse === null) {
       return {
-        errorUpload: i18nInstance.t('errors.parseError'),
+        errorUpload: 'errors.parseError',
         formState: 'failed',
         feed: {},
         posts: [],
@@ -28,26 +28,26 @@ const uploadChannel = (url, i18nInstance) => uploadRSS(url)
   .catch((error) => {
     if (error.isAxiosError) {
       return {
-        errorUpload: i18nInstance.t('errors.networkError'),
+        errorUpload: 'errors.networkError',
         formState: 'failed',
         feed: {},
         posts: [],
       };
     }
     return {
-      errorUpload: i18nInstance.t('errors.invalid'),
+      errorUpload: 'errors.invalid',
       formState: 'failed',
       feed: {},
       posts: [],
     };
   });
 
-const updateRSS = (state, i18nInstance, watched) => {
+const updateRSS = (state, watched) => {
   const interval = 5000;
 
   const updatePosts = () => {
     watched.form.state = 'updating';
-    const promises = state.validUrls.map((url) => uploadChannel(url, i18nInstance));
+    const promises = state.validUrls.map((url) => uploadChannel(url));
     Promise.all(promises)
       .then((results) => {
         state.updateProcess = 'running';
@@ -57,8 +57,9 @@ const updateRSS = (state, i18nInstance, watched) => {
             const unionPosts = _.unionBy(state.posts, posts, 'linkPost');
             const newPosts = _.differenceBy(unionPosts, state.posts, 'linkPost');
             state.posts = [...newPosts, ...state.posts];
+          } else {
+            watched.form.error = errorUpload;
           }
-          watched.form.error = errorUpload;
         });
         watched.form.state = 'updated';
         setTimeout(updatePosts, interval);
@@ -71,21 +72,21 @@ const updateRSS = (state, i18nInstance, watched) => {
   }
 };
 
-const handler = (state, el, i18nInstance) => {
+export const handler = (watched, el) => {
   const formData = new FormData(el.target);
   const currentUrl = formData.get('url').trim();
-  const watched = watchedState(state, i18nInstance);
+  // const watched = watchedState(state, i18nInstance);
 
   watched.form.state = 'sending';
 
-  const urls = state.validUrls;
-  validate({ url: currentUrl }, urls, i18nInstance)
+  const urls = watched.validUrls;
+  validate({ url: currentUrl }, urls)
     .then((errors) => {
       if (errors) {
         watched.form.error = errors.message;
         watched.form.state = 'failed';
       } else {
-        uploadChannel(currentUrl, i18nInstance)
+        uploadChannel(currentUrl)
           .then((result) => {
             const {
               errorUpload,
@@ -95,9 +96,9 @@ const handler = (state, el, i18nInstance) => {
             } = result;
 
             if (errorUpload === null) {
-              state.feeds.unshift(feed);
-              state.posts = [...posts, ...state.posts];
-              state.validUrls.unshift(currentUrl);
+              watched.feeds.unshift(feed);
+              watched.posts = [...posts, ...watched.posts];
+              watched.validUrls.unshift(currentUrl);
             }
             watched.form.error = errorUpload;
             watched.form.state = formState;
@@ -105,15 +106,20 @@ const handler = (state, el, i18nInstance) => {
       }
     })
     .then(() => {
-      updateRSS(state, i18nInstance, watched);
+      updateRSS(watched, watched);
     });
 };
 
-export const handlerPost = (state, post) => {
+export const handlerPost = (watched, post) => {
   const { idPost } = post;
-  if (!state.viewedPosts.includes(idPost)) {
-    state.viewedPosts.push(idPost);
+  if (!watched.viewedPosts.includes(idPost)) {
+    watched.viewedPosts.push(idPost);
   }
 };
 
-export default handler;
+export const handlerChangeLang = (watched, el, i18nInstance) => {
+  i18nInstance.changeLanguage(el.target.dataset.language);
+  watched.lng = el.target.dataset.language;
+};
+
+// export default handler;

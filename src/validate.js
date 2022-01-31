@@ -1,12 +1,12 @@
 import * as yup from 'yup';
 
-export default (data, urls, i18nInstance) => {
+export default (data, urls) => {
   yup.setLocale({
     string: {
-      url: () => i18nInstance.t('errors.invalid'),
+      url: () => 'errors.invalid',
     },
     mixed: {
-      notOneOf: () => i18nInstance.t('errors.alreadyExist'),
+      notOneOf: () => 'errors.alreadyExist',
     },
   });
 

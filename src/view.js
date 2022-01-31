@@ -2,6 +2,10 @@
 import onChange from 'on-change';
 import { handlerPost } from './handler';
 
+const input = document.getElementById('url-input');
+const feedback = document.querySelector('.feedback');
+const buttonAdd = document.querySelector('[aria-label="add"]');
+
 const renderModal = (post) => {
   const body = document.querySelector('body');
   body.classList.add('modal-open');
@@ -38,6 +42,10 @@ const renderModal = (post) => {
 };
 
 const renderFeed = (state, i18nInstance) => {
+  const { feeds } = state;
+  if (feeds.length === 0) {
+    return;
+  }
   const feedsContainer = document.querySelector('.feeds');
   feedsContainer.innerHTML = '';
 
@@ -50,7 +58,6 @@ const renderFeed = (state, i18nInstance) => {
   ul.classList.add('list-group', 'border-0', 'rounded-0');
   div.append(ul);
 
-  const { feeds } = state;
   feeds.forEach((feed) => {
     const { title, description } = feed;
     const li = document.createElement('li');
@@ -106,10 +113,6 @@ const renderPost = (state, i18nInstance) => {
 };
 
 const render = (state, value, i18nInstance) => {
-  const input = document.getElementById('url-input');
-  const feedback = document.querySelector('.feedback');
-  const buttonAdd = document.querySelector('[aria-label="add"]');
-
   input.removeAttribute('readonly');
   buttonAdd.removeAttribute('disabled');
 
@@ -126,7 +129,7 @@ const render = (state, value, i18nInstance) => {
       input.classList.add('is-invalid');
       input.focus();
       feedback.classList.add('text-danger');
-      feedback.textContent = state.form.error;
+      feedback.textContent = i18nInstance.t(state.form.error);
       break;
     case 'success':
       input.classList.remove('is-invalid');
@@ -146,11 +149,52 @@ const render = (state, value, i18nInstance) => {
   }
 };
 
+const renderLang = (value, i18nInstance, state) => {
+  const itemsLang = document.querySelectorAll('[data-language]');
+  itemsLang.forEach((item) => {
+    if (item.dataset.language === value) {
+      item.classList.add('fw-bold');
+    } else {
+      item.classList.remove('fw-bold');
+    }
+  });
+
+  const mineTitle = document.querySelector('.main-title');
+  mineTitle.textContent = i18nInstance.t('elements.title');
+
+  const lead = document.querySelector('.lead');
+  lead.textContent = i18nInstance.t('elements.descr');
+
+  input.setAttribute('placeholder', i18nInstance.t('elements.placeholder'));
+
+  const label = document.querySelector('[for="url-input"]');
+  label.textContent = i18nInstance.t('elements.placeholder');
+
+  const example = document.querySelector('#example');
+  example.textContent = i18nInstance.t('elements.example');
+
+  buttonAdd.textContent = i18nInstance.t('elements.buttonAdd');
+
+  const buttonRead = document.querySelector('.btn-primary');
+  buttonRead.textContent = i18nInstance.t('elements.buttonRead');
+
+  const buttonClose = document.querySelector('.btn-secondary');
+  buttonClose.textContent = i18nInstance.t('elements.buttonClose');
+
+  renderFeed(state, i18nInstance);
+  renderPost(state, i18nInstance);
+
+  feedback.textContent = (state.form.error === null && state.form.state !== 'filling') ? i18nInstance.t('success') : i18nInstance.t(state.form.error);
+};
+
 export default (state, i18nInstance) => {
   const watchedState = onChange(state, (path, value) => {
     switch (path) {
       case 'form.state':
         render(state, value, i18nInstance);
+        break;
+      case 'lng':
+        renderLang(value, i18nInstance, state);
         break;
       default:
         break;

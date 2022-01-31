@@ -1,10 +1,5 @@
 /* eslint-disable import/no-cycle */
-// import onChange from 'on-change';
 import { handlerPost } from './handler';
-
-// const input = document.getElementById('url-input');
-// const feedback = document.querySelector('.feedback');
-// const buttonAdd = document.querySelector('[aria-label="add"]');
 
 const renderModal = (post) => {
   const body = document.querySelector('body');
@@ -194,8 +189,6 @@ const renderLang = (value, i18nInstance, state) => {
 };
 
 export default (state, path, value, i18nInstance) => {
-// export default (state, i18nInstance) => {
-  // const watchedState = onChange(state, (path, value) => {
   switch (path) {
     case 'form.state':
       render(state, value, i18nInstance);
@@ -206,7 +199,4 @@ export default (state, path, value, i18nInstance) => {
     default:
       break;
   }
-  // });
-
-  // return watchedState;
 };

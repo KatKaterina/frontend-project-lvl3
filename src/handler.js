@@ -2,7 +2,6 @@
 /* eslint-disable no-param-reassign */
 import _ from 'lodash';
 import validate from './validate.js';
-// import watchedState from './view.js';
 import uploadRSS from './uploadRSS';
 import parse from './parse.js';
 
@@ -75,7 +74,6 @@ const updateRSS = (state, watched) => {
 export const handler = (watched, el) => {
   const formData = new FormData(el.target);
   const currentUrl = formData.get('url').trim();
-  // const watched = watchedState(state, i18nInstance);
 
   watched.form.state = 'sending';
 
@@ -121,5 +119,3 @@ export const handlerChangeLang = (watched, el, i18nInstance) => {
   i18nInstance.changeLanguage(el.target.dataset.language);
   watched.lng = el.target.dataset.language;
 };
-
-// export default handler;

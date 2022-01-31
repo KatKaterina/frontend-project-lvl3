@@ -187,8 +187,9 @@ const renderLang = (value, i18nInstance, state) => {
   feedback.textContent = (state.form.error === null && state.form.state !== 'filling') ? i18nInstance.t('success') : i18nInstance.t(state.form.error);
 };
 
-export default (state, i18nInstance) => {
-  const watchedState = onChange(state, (path, value) => {
+export default (state, path, value, i18nInstance) => {
+//export default (state, i18nInstance) => {
+  //const watchedState = onChange(state, (path, value) => {
     switch (path) {
       case 'form.state':
         render(state, value, i18nInstance);
@@ -199,7 +200,7 @@ export default (state, i18nInstance) => {
       default:
         break;
     }
-  });
+  //});
 
-  return watchedState;
+  //return watchedState;
 };

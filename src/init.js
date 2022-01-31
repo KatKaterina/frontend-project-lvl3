@@ -1,4 +1,5 @@
 import i18n from 'i18next';
+import onChange from 'on-change';
 // import handler from './handler.js';
 import { handler, handlerChangeLang } from './handler.js';
 import resources from './locales/index.js';
@@ -24,7 +25,8 @@ export default () => {
     resources,
   });
 
-  const watched = watchedState(state, i18nInstance);
+  //const watched = watchedState(state, i18nInstance);
+  const watched = onChange(state, (path, value) => (watchedState(state, path, value, i18nInstance)));
 
   const form = document.querySelector('#rss-form');
   form.addEventListener('submit', (e) => {

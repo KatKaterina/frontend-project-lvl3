@@ -1,5 +1,5 @@
 /* eslint-disable import/no-cycle */
-import { handlerPost } from './handler';
+import { handlerPost } from './handler.js';
 
 const renderModal = (post) => {
   const body = document.querySelector('body');

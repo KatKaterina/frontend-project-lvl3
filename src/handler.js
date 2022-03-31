@@ -2,7 +2,7 @@
 /* eslint-disable no-param-reassign */
 import _ from 'lodash';
 import validate from './validate.js';
-import uploadRSS from './uploadRSS';
+import uploadRSS from './uploadRSS.js';
 import parse from './parse.js';
 
 const uploadChannel = (url) => uploadRSS(url)

@@ -9,4 +9,6 @@ RSS Aggregator is a service for aggregating RSS feeds, with which it is convenie
 
 It allows you to add RSS feeds, updates them and adds new entries to the general stream.
 
+The main technologies used: JS/DOM API/AJAX/Webpack
+
 ### Project demonstration on Versel: [RSS agregator](https://frontend-project-lvl3-omega-two.vercel.app/)
